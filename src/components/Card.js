@@ -17,7 +17,7 @@ export const Card = () => {
                     <span className="text-5xl font-extrabold tracking-tight">{item.price}</span>
                     <span className="ms-2 font-medium text-body">{item.period}</span>
                 </div>
-                <ul role="list" className="space-y-4 my-6">
+                <ul className="space-y-4 my-6">
                     <li className="flex items-center">
                         <svg className="w-5 h-5 shrink-0 text-fg-brand me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                         <span className="text-body">2 team members</span>
