@@ -1,36 +1,117 @@
+import { useState, useRef, useEffect } from "react"
 
 export const Header = () => {
-  return (
+
+    const [isShow, setIsShow] = useState(false);
+    const [isSubShow, setIsSubShow] = useState(false);
+
+    const dropdownRef = useRef(null);
+
+    const toggleDropDown = () => 
+      setIsShow((prev) => !prev);
+
+      useEffect(() => {
+        // Function to check if click was outside the dropdown
+        const handleEvents = (event) => {
+            // Close on Click Outside
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsShow(false);
+                setIsSubShow(false); // Reset the sub-menu too
+            }
+            
+            // Close on Escape Key
+            if (event.key === 'Escape' || event.key === "Esc") {
+                setIsShow(false);
+                setIsSubShow(false);
+            }
+        };
+    
+        document.addEventListener("mousedown", handleEvents);
+        document.addEventListener("keydown", handleEvents); // Listen for keys
+    
+        return () => {
+            document.removeEventListener("mousedown", handleEvents);
+            document.removeEventListener("keydown", handleEvents);
+        };
+    }, []);
+    
+    return (
     
     <header>
     <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 text-primary-600">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-            <a href="https://flowbite.com" className="flex items-center">
+            <a href="/" className="flex items-center">
                 <img src="https://flowbite.com/docs/images/logo.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
                 <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Bonsai</span>
             </a>
             <div className="flex items-center lg:order-2">
                 <a href="/" className="text-primary-700 outline outline-primary-700 outline-1 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-md text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">LOG IN</a>
-                <a href="/" className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-md text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">START FREE</a>
+                <a href="/" className="text-white bg-primary-700 hover:bg-green-700 focus:ring-4 focus:ring-primary-300 font-medium rounded-md text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-green-700">START FREE</a>
                 <button data-collapse-toggle="mobile-menu-2" type="button" className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
                     <span className="sr-only">Open main menu</span>
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
                     <svg className="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                 </button>
             </div>
-            <div className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
+            
+            <div ref={dropdownRef} className="relative justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
                 <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+
+                    {/*Dropdown Button for Product*/}                    
+                    <button onClick={toggleDropDown} id="multiLevelDropdownButton" data-dropdown-toggle="multi-dropdown" className="inline-flex items-center justify-center w-full py-2 pr-1 pl-3 text-md text-primary-600 bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-semibold leading-5 rounded-base px-4 focus:outline-none hover:text-primary-700" type="button">
+                    Product
+                    <svg className="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 9-7 7-7-7"/></svg>
+                    </button>
+
+                   {/* Dropdown Menu - Only shows if isShow is true */}
+                    {isShow && (  
+                    <div id="multi-dropdown" className="absolute left-0 top-full z-50 bg-white border-default-medium rounded-base shadow-lg w-44">
+                        <ul className="p-2 text-sm text-body font-medium" aria-labelledby="multiLevelDropdownButton">
+                        <li className="relative">
+                            <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Dashboard</a>
+                        </li>
+                        <li>
+                            <button onClick={() => setIsSubShow(!isSubShow)} id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                            Dropdown
+                            <svg className="h-4 w-4 ms-auto rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/></svg>
+                            </button>
+                            {isSubShow && (
+                            <div id="doubleDropdown" className="absolute left-full top-0 z-10 bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44">
+                                <ul className="p-2 text-sm text-body font-medium" aria-labelledby="doubleDropdownButton">
+                                <li>
+                                    <a href="#/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Overview</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">My downloads</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Billing</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Rewards</a>
+                                </li>
+                                </ul>
+                            </div>
+                            )}
+                        </li>    
+                                    
+                        <li>
+                            <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Earnings</a>
+                        </li>
+                        <li>
+                            <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Sign out</a>
+                        </li>
+                        </ul>
+                    </div>
+                    )}
                     <li>
-                        <a href="/" className="block py-2 pr-4 pl-3 text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700 lg:p-0 dark:text-white" aria-current="page">Product</a>
+                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Template</a>
                     </li>
                     <li>
-                        <a href="/" className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Template</a>
+                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Pricing</a>
                     </li>
                     <li>
-                        <a href="/" className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Pricing</a>
-                    </li>
-                    <li>
-                        <a href="/" className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Reviews</a>
+                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Reviews</a>
                     </li>
                 </ul>
             </div>
