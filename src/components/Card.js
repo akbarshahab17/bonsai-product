@@ -2,16 +2,26 @@
 export const Card = () => {
 
     const cardData = [
-        {id:"1", title:"Standard plan", price:"$49", period:"/month", list:"", button:"START FREE"},
-        {id:"2", title:"Professional", price:"$39", period:"/month", list:"", button:"START FREE"},
-        {id:"3", title:"Business", price:"$79", period:"/month", list:"", button:"START FREE"}
+        {id:"1", title:"Standard plan", price:"$49", period:"/month", list:"", button:"START FREE", isPopular: false},
+        {id:"2", title:"Professional", price:"$39", period:"/month", list:"", button:"START FREE", isPopular: true},
+        {id:"3", title:"Business", price:"$79", period:"/month", list:"", button:"START FREE", isPopular: false}
     ]
 
   return (
     <div className="flex flex-wrap justify-center gap-2">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-2 justify-items-start">    
         {cardData.map((item) => (
-            <div key={item.id} className="w-full max-w-sm p-6 bg-neutral-primary-soft border border-default rounded-base drop-shadow-sm hover:drop-shadow-xl">
+            <div key={item.id} className={`relative w-full max-w-sm p-8 bg-white border rounded-base drop-shadow-sm transition-all duration-300
+                ${item.isPopular 
+                    ? 'border-primary-700 scale-105 z-10 drop-shadow-xl' 
+                    : 'border-default hover:drop-shadow-xl'
+                }`}>
+                {/* THE POPULAR TAG */}
+                {item.isPopular && (
+                        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-700 text-white text-[13px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-md whitespace-nowrap">
+                            Most Popular
+                        </span>
+                )}
                 <h5 className="mb-4 text-xl font-medium text-body">{item.title}</h5>
                 <div className="flex items-baseline text-heading">
                     <span className="text-5xl font-extrabold tracking-tight">{item.price}</span>

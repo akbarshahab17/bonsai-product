@@ -1,30 +1,36 @@
 import { useState, useRef, useEffect } from "react"
+import logo from "../assets/logo.png";
 
 export const Header = () => {
-
-    const [isShow, setIsShow] = useState(false);
-    const [isSubShow, setIsSubShow] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState(null); // 'product', 'templates', or null
+    const [openSubMenu, setOpenSubMenu] = useState(null);
 
     const dropdownRef = useRef(null);
 
-    const toggleDropDown = () => 
-      setIsShow((prev) => !prev);
+    // 2. Update toggle to accept which menu is being clicked
+    const toggleDropDown = (menuName) => {
+        setOpenDropdown((prev) => (prev === menuName ? null : menuName));
+        setOpenSubMenu(null); // Close submenus when switching main menus
+    };
 
-      useEffect(() => {
-        // Function to check if click was outside the dropdown
+    const toggleSubMenu = (subMenuName) => {
+        setOpenSubMenu((prev) => (prev === subMenuName ? null : subMenuName));
+    };
+    
+
+    useEffect(() => {
         const handleEvents = (event) => {
-            // Close on Click Outside
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsShow(false);
-                setIsSubShow(false); // Reset the sub-menu too
+                setOpenDropdown(null); // Close everything
+                setOpenSubMenu(null);
             }
-            
-            // Close on Escape Key
             if (event.key === 'Escape' || event.key === "Esc") {
-                setIsShow(false);
-                setIsSubShow(false);
+                setOpenDropdown(null);
+                setOpenSubMenu(null);
             }
         };
+        
+    
     
         document.addEventListener("mousedown", handleEvents);
         document.addEventListener("keydown", handleEvents); // Listen for keys
@@ -41,7 +47,7 @@ export const Header = () => {
     <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 text-primary-600">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <a href="/" className="flex items-center">
-                <img src="https://flowbite.com/docs/images/logo.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
+                <img src={logo} className="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
                 <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Bonsai</span>
             </a>
             <div className="flex items-center lg:order-2">
@@ -58,37 +64,34 @@ export const Header = () => {
                 <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
 
                     {/*Dropdown Button for Product*/}                    
-                    <button onClick={toggleDropDown} id="multiLevelDropdownButton" data-dropdown-toggle="multi-dropdown" className="inline-flex items-center justify-center w-full py-2 pr-1 pl-3 text-md text-primary-600 bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-semibold leading-5 rounded-base px-4 focus:outline-none hover:text-primary-700" type="button">
+                    <button onClick={() => toggleDropDown("product")} id="multiLevelDropdownButton" data-dropdown-toggle="multi-dropdown" className="inline-flex w-full py-2 pr-4 pl-3 my-3 text-md text-primary-600 bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-semibold leading-5 rounded-base px-4 focus:outline-none hover:text-primary-700" type="button">
                     Product
                     <svg className="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 9-7 7-7-7"/></svg>
                     </button>
 
                    {/* Dropdown Menu - Only shows if isShow is true */}
-                    {isShow && (  
-                    <div id="multi-dropdown" className="absolute left-0 top-full z-50 bg-white border-default-medium rounded-base shadow-lg w-44">
-                        <ul className="p-2 text-sm text-body font-medium" aria-labelledby="multiLevelDropdownButton">
+                    {openDropdown === 'product' &&(  
+                    <div id="multi-dropdown" className="absolute left-0 top-full z-50 bg-white border-default-medium rounded-base shadow-lg w-80">
+                        <ul className="p-2 text-lg text-body font-medium" aria-labelledby="multiLevelDropdownButton">
                         <li className="relative">
-                            <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Dashboard</a>
-                        </li>
-                        <li>
-                            <button onClick={() => setIsSubShow(!isSubShow)} id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
-                            Dropdown
+                            <button onClick={() => toggleSubMenu("workflow")} id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                            Bonsai Workflow
                             <svg className="h-4 w-4 ms-auto rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/></svg>
                             </button>
-                            {isSubShow && (
-                            <div id="doubleDropdown" className="absolute left-full top-0 z-10 bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44">
-                                <ul className="p-2 text-sm text-body font-medium" aria-labelledby="doubleDropdownButton">
+                            {openSubMenu === 'workflow' &&(
+                            <div id="doubleDropdown" className="absolute left-full top-0 z-10 bg-white border border-default-medium rounded-base shadow-lg w-96">
+                                <ul className="p-2 text-base text-body font-medium" aria-labelledby="doubleDropdownButton">
                                 <li>
-                                    <a href="#/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Overview</a>
+                                    <a href="#/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Invoices</a>
                                 </li>
                                 <li>
-                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">My downloads</a>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Proposals</a>
                                 </li>
                                 <li>
-                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Billing</a>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Contracts</a>
                                 </li>
                                 <li>
-                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Rewards</a>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Client CRM</a>
                                 </li>
                                 </ul>
                             </div>
@@ -96,8 +99,129 @@ export const Header = () => {
                         </li>    
                                     
                         <li>
-                            <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Earnings</a>
+                            <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Bonsai Tax</a>
                         </li>
+                        <li>
+                            <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Bonsai Cash</a>
+                        </li>
+                        </ul>
+                    </div>
+                    )}
+                    {/*Dropdown Button for Templates*/}                    
+                    <button onClick={() => toggleDropDown("templates")} id="multiLevelDropdownButton" data-dropdown-toggle="multi-dropdown" className="inline-flex w-full py-2 pr-4 pl-3 my-3 text-md text-primary-600 bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-semibold leading-5 rounded-base px-4 focus:outline-none hover:text-primary-700" type="button">
+                    Templates
+                    <svg className="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 9-7 7-7-7"/></svg>
+                    </button>
+
+                   {/* Dropdown Menu - Only shows if isShow is true */}
+                    {openDropdown === 'templates' &&(  
+                    <div id="multi-dropdown" className="absolute left-0 top-full z-50 bg-white border-default-medium rounded-base shadow-lg w-80">
+                        <ul className="p-2 text-lg text-body font-medium" aria-labelledby="multiLevelDropdownButton">
+                        <li className="relative">
+                            <button onClick={() => toggleSubMenu("contracts")} id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                            Contract Templates
+                            <svg className="h-4 w-4 ms-auto rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/></svg>
+                            </button>
+                            {openSubMenu === 'contracts' && (
+                            <div id="doubleDropdown" className="absolute left-full top-0 z-10 bg-white border border-default-medium rounded-base shadow-lg w-96">
+                                <h2 className="text-xl text-center">Featured Invoice Templates</h2>
+                                <ul className="p-2 text-base text-body font-medium" aria-labelledby="doubleDropdownButton">
+                                <li>
+                                    <a href="#/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Free Contract Maker</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Social Media Management Contract Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Graphic Design Contract Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Digital Marketing Contract Template</a>
+                                </li>
+                                </ul>
+                                <span className="text-center text-blue-500 mx-20">See all templates</span>
+                            </div>
+                            )}
+                        </li>    
+                                    
+                        <li className="relative">
+                            <button onClick={() => toggleSubMenu("proposals")} id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                            Proposal Templates
+                            <svg className="h-4 w-4 ms-auto rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/></svg>
+                            </button>
+                            {openSubMenu === "proposals" && (
+                            <div id="doubleDropdown" className="absolute left-full top-0 z-10 bg-white border border-default-medium rounded-base shadow-lg w-96">
+                                <h2 className="text-xl text-center">Featured Proposal Templates</h2>
+                                <ul className="p-2 text-base text-body font-medium" aria-labelledby="doubleDropdownButton">
+                                <li>
+                                    <a href="#/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Graphic Design Proposal Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Business Proposal Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Brand Ambassador Proposal Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Interior Design Scope of Work Template</a>
+                                </li>
+                                </ul>
+                                <span className="text-center text-blue-500 mx-20">See all templates</span>
+                            </div>
+                            )}
+                        </li>
+                        <li className="relative">
+                            <button onClick={() => toggleSubMenu("invoice")} id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                            Invoice Templates
+                            <svg className="h-4 w-4 ms-auto rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/></svg>
+                            </button>
+                            {openSubMenu === "invoice" && (
+                            <div id="doubleDropdown" className="absolute left-full top-0 z-10 bg-white border border-default-medium rounded-base shadow-lg w-96">
+                                <h2 className="text-xl text-center">Featured Invoice Templates</h2>
+                                <ul className="p-2 text-base text-body font-medium" aria-labelledby="doubleDropdownButton">
+                                <li>
+                                    <a href="#/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Social Media Invoice Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Contractor Invoice Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Web Design Invoice Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Influencer Invoice Template</a>
+                                </li>
+                                </ul>
+                                <span className="text-center text-blue-500 mx-20">See all templates</span>
+                            </div>
+                            )}
+                        </li>        
+                        <li className="relative">
+                            <button onClick={() => toggleSubMenu("agreement")} id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                            Agreement Templates
+                            <svg className="h-4 w-4 ms-auto rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/></svg>
+                            </button>
+                            {openSubMenu === "agreement" && (
+                            <div id="doubleDropdown" className="absolute left-full top-0 z-10 bg-white border border-default-medium rounded-base shadow-lg w-96">
+                                <h2 className="text-xl text-center">Featured Agreement Templates</h2>
+                                <ul className="p-2 text-base text-body font-medium" aria-labelledby="doubleDropdownButton">
+                                <li>
+                                    <a href="#/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Influencer Agreement Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Influencer Collaboration Agreement Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Monthly Retainer Agreement Template</a>
+                                </li>
+                                <li>
+                                    <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Writer Agreement Template</a>
+                                </li>
+                                </ul>
+                                <span className="text-blue-500 mx-20">See all templates</span>
+                            </div>
+                            )}
+                        </li>        
                         <li>
                             <a href="/" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Sign out</a>
                         </li>
@@ -105,13 +229,10 @@ export const Header = () => {
                     </div>
                     )}
                     <li>
-                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Template</a>
+                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 lg:py-1.5">Pricing</a>
                     </li>
                     <li>
-                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Pricing</a>
-                    </li>
-                    <li>
-                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Reviews</a>
+                        <a href="/" className="block py-2 pr-4 pl-3 my-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700 lg:py-1.5">Reviews</a>
                     </li>
                 </ul>
             </div>

@@ -3,11 +3,11 @@ import { Card } from "../components/Card";
 export const Hero = () => {
   return (
     <div className="text-primary-600">
-      <div className="flex py-16">
-          <div className="text-4xl text-right w-full mx-8 px-10">
+      <div className="md:flex md:py-7">
+          <div className="text-4xl w-full text-center py-3 lg:mx-8 lg:px-10">
               <h1>Plans & Pricing</h1>
           </div>
-          <div className="flex w-full text-md">             
+          <div className="w-full text-md text-center py-3 md:py-5">             
             <label className="inline-flex items-center cursor-pointer">
               <span className="select-none font-medium text-heading">MONTHLY</span>
               <input type="checkbox" value="" className="sr-only peer"/>
@@ -15,7 +15,7 @@ export const Hero = () => {
               <span className="select-none font-medium text-heading">YEARLY</span>
             </label>
           </div>
-        </div>
+       </div>
         <div>
             <Card />
         </div>
